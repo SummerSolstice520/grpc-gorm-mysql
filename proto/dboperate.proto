@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package proto;
+
+service Operation{
+    // insert
+    rpc insert(insDelUpdRequest) returns (reply) {}
+    // delete
+    rpc delete(insDelUpdRequest) returns (reply) {}
+    // update
+    rpc update(insDelUpdRequest) returns (reply) {}
+    // select
+    rpc select(selectRequest) returns (reply) {}
+    // execute sql
+    rpc execSql(sqlRequest) returns (reply) {}
+}
+
+// insert, delete and update
+message insDelUpdRequest{
+    string table = 1;
+    int32 id = 2;
+   	string name = 3;
+   	float price = 4;
+   	int32 typeId = 5;
+   	int64 createTime = 6;
+}
+
+// select
+message selectRequest{
+    string columns = 1;
+    string table = 2;
+    string condition = 3;
+}
+
+// execSql
+message sqlRequest{
+    string sql = 1;
+}
+
+// return
+message reply{
+    string result = 1;
+}
+
+// protoc --go_out=plugins=grpc:. dboperate.proto
