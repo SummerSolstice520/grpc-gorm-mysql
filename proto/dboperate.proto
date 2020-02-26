@@ -17,12 +17,11 @@ service Operation{
 
 // insert, delete and update
 message insDelUpdRequest{
-    string table = 1;
-    int32 id = 2;
-   	string name = 3;
-   	float price = 4;
-   	int32 typeId = 5;
-   	int64 createTime = 6;
+    int32 id = 1;
+   	string name = 2;
+   	float price = 3;
+   	int32 typeId = 4;
+   	int64 createTime = 5;
 }
 
 // select

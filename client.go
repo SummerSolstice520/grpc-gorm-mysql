@@ -46,9 +46,6 @@ func main() {
 				result, err = c.Select(context.Background(), &pb.SelectRequest{Columns:columns, Table:table, Condition:con})
 			// insert
 			case "2":
-				fmt.Printf("Please enter the table name:\n")
-				var table string
-				fmt.Scanln(&table)
 				fmt.Printf("Please enter the data: \n example: 2 yan 2.0 3 5 \n")
 				var id int32
 				var name string
@@ -56,12 +53,9 @@ func main() {
 				var typeId int32
 				var createTime int64
 				fmt.Scanf("%d %s %f %d %d", &id, &name, &price, &typeId, &createTime)
-				result, err = c.Insert(context.Background(), &pb.InsDelUpdRequest{Table:table, Id:id, Name:name, Price:price, TypeId:typeId, CreateTime:createTime})
+				result, err = c.Insert(context.Background(), &pb.InsDelUpdRequest{Id:id, Name:name, Price:price, TypeId:typeId, CreateTime:createTime})
 			// delete
 			case "3":
-				fmt.Printf("Please enter the table name:\n")
-				var table string
-				fmt.Scanln(&table)
 				fmt.Printf("Please enter the data: \n example: 2 yan 2.0 3 5 \n")
 				var id int32
 				var name string
@@ -70,11 +64,9 @@ func main() {
 				var createTime int64
 				fmt.Scanf("%d %s %f %d %d\n", &id, &name, &price, &typeId, &createTime)
 				result, err = c.Delete(context.Background(), &pb.InsDelUpdRequest{Id:id, Name:name, Price:price, TypeId:typeId, CreateTime:createTime})
+			// update
 			case "4":
-				fmt.Printf("Please enter the table name:\n")
-				var table string
-				fmt.Scanln(&table)
-				fmt.Printf("Please enter the data: \n example: 2 li 20 30 50 \n")
+				fmt.Printf("Please enter the data: \n example: 3 wang 20  50 \n")
 				var id int32
 				var name string
 				var price float32
@@ -84,7 +76,7 @@ func main() {
 				result, err = c.Update(context.Background(), &pb.InsDelUpdRequest{Id:id, Name:name, Price:price, TypeId:typeId, CreateTime:createTime})
 			// sql
 			case "5":
-				fmt.Printf("Please enter the sql:\n")
+				fmt.Printf("Please enter the sql: \n")
 				var sql string
 				fmt.Scanln(&sql)
 				result, err = c.ExecSql(context.Background(), &pb.SqlRequest{Sql:sql})

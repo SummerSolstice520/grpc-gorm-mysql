@@ -18,17 +18,17 @@ const port = ":6664"
 type myServer struct {}
 
 func (m *myServer) Insert(ctx context.Context, in *pb.InsDelUpdRequest) (*pb.Reply, error) {
-	mysql.Insert(in.GetTable(), in.GetId(), in.GetName(), in.GetPrice(), in.GetTypeId(), in.GetCreateTime())
+	mysql.InsDelUpd("insert", in.GetId(), in.GetName(), in.GetPrice(), in.GetTypeId(), in.GetCreateTime())
 	return &pb.Reply{Result: "Insert completed."}, nil
 }
 
 func (m *myServer) Delete(ctx context.Context, in *pb.InsDelUpdRequest) (*pb.Reply, error) {
-	mysql.Delete(in.GetTable(), in.GetId(), in.GetName(), in.GetPrice(), in.GetTypeId(), in.GetCreateTime())
+	mysql.InsDelUpd("delete", in.GetId(), in.GetName(), in.GetPrice(), in.GetTypeId(), in.GetCreateTime())
 	return &pb.Reply{Result: "Delete completed."}, nil
 }
 
 func (m *myServer) Update(ctx context.Context, in *pb.InsDelUpdRequest) (*pb.Reply, error) {
-	mysql.Update(in.GetTable(), in.GetId(), in.GetName(), in.GetPrice(), in.GetTypeId(), in.GetCreateTime())
+	mysql.InsDelUpd("update", in.GetId(), in.GetName(), in.GetPrice(), in.GetTypeId(), in.GetCreateTime())
 	return &pb.Reply{Result: "Update completed."}, nil
 }
 

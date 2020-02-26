@@ -15,97 +15,70 @@ type Food struct {
 	CreateTime int64 `gorm:"column:createtime"`
 }
 
-// dataSourceName returns dsn (data source name).
-func dataSourceName() string {
+// connMysql connects Mysql with dsn
+func connMysql() *gorm.DB{
+	// data source name: username:password@protocol(address)/dbname?param=value
 	username := "root"
 	password := "123"
 	address := "127.0.0.1:3306"
 	dbname := "test"
 	timeout := "10s"
-	// dsn: username:password@protocol(address)/dbname?param=value
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=%s", username, password, address, dbname, timeout)
-	return dsn
-}
 
-func Insert(table string, id int32, name string, price float32, typeId int32, createTime int64) {
 	// connect mysql
-	dsn := dataSourceName()
 	var db, err = gorm.Open("mysql", dsn)
 	if err != nil {
 		panic("Failed to connect to database: " + err.Error())
 	}
-	defer db.Close()
-
-	food := &Food{
-		id,
-		name,
-		price,
-		typeId,
-		createTime,
-	}
-	db.Table(table).Create(food)
+	return db
 }
 
-func Delete(table string, id int32, name string, price float32, typeId int32, createTime int64) {
+// InsDelUpd operates on row-level data
+func InsDelUpd(op string, id int32, name string, price float32, typeId int32, createTime int64) {
 	// connect mysql
-	dsn := dataSourceName()
-	var db, err = gorm.Open("mysql", dsn)
-	if err != nil {
-		panic("Failed to connect to database: " + err.Error())
-	}
+	db := connMysql()
 	defer db.Close()
 
-	food := &Food{
-		id,
-		name,
-		price,
-		typeId,
-		createTime,
+	switch op{
+	case "insert":
+		food := &Food{
+			id,
+			name,
+			price,
+			typeId,
+			createTime,
+		}
+		db.Create(food)
+	case "delete":
+		food := &Food{
+			id,
+			name,
+			price,
+			typeId,
+			createTime,
+		}
+		db.Delete(&food)
+	case "update":
+		food := &Food{Id:id}
+		db.Model(&food).Update(Food{Name:name, Price:price, TypeId:typeId, CreateTime:createTime})
 	}
-	db.Table(table).Delete(&food)
-}
-
-func Update(table string, id int32, name string, price float32, typeId int32, createTime int64) {
-	// connect mysql
-	dsn := dataSourceName()
-	var db, err = gorm.Open("mysql", dsn)
-	if err != nil {
-		panic("Failed to connect to database: " + err.Error())
-	}
-	defer db.Close()
-
-	food := &Food{Id:id}
-	db.Model(&food).Update(Food{Name:name, Price:price, TypeId:typeId, CreateTime:createTime})
 }
 
 // Select returns query results
 func Select(table string, columns string, condition string) string {
 	// connect mysql
-	dsn := dataSourceName()
-	var db, err = gorm.Open("mysql", dsn)
-	if err != nil {
-		panic("Failed to connect to database: " + err.Error())
-	}
+	db := connMysql()
 	defer db.Close()
 
 	var foods []Food
-	var sql = "SELECT " + columns + " FROM " + table
-	if condition != "" {
-		sql += " WHERE " + condition
-	}
-
-	db.Raw(sql).Scan(&foods)
-	response := fmt.Sprintf("%v",foods)
+	db.Where(condition).Select(columns).Find(&foods)
+	response := fmt.Sprintf("%v", foods)
 	return response
 }
 
 // ExecSql executes SQL statement
 func ExecSql(sql string) {
-	dsn := dataSourceName()
-	db ,err:= gorm.Open("mysql", dsn)
-	if err != nil {
-		panic("Failed to connect to database: " + err.Error())
-	}
+	db := connMysql()
 	defer db.Close()
 
 	db.Exec(sql)
